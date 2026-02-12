@@ -225,7 +225,6 @@ audit_logs
 
 ## Sample Transaction Upload JSON
 
-```json
 [
   {
     "transactionId": "TXN500",
@@ -238,4 +237,8 @@ audit_logs
   }
 ]
 
+## Database Schema Diagram
+The database schema ER diagram is available at:
+
+docs/db-schema.png
 
