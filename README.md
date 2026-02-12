@@ -20,19 +20,23 @@ This application automates all of the above.
 
 ---
 
-## Architecture
-**Architecture Style:** Layered Architecture (Monolithic)
-Controller → Service → Rule Engine → Repository → MySQL
-↓
-Audit Logs
+### Architecture Layers
+- Controller Layer: Handles REST APIs and request validation
+- Service Layer: Contains core business logic such as tax calculation and compliance checks
+- Rule Engine Layer: Executes database-driven compliance rules using the Strategy Pattern
+- Repository Layer: Manages persistence using Spring Data JPA
+- Database Layer: MySQL stores transactional, rule, exception, and audit data
 
+### Rule Engine Design
+Compliance rules are stored in the database with JSON-based configuration. Each rule is implemented as a separate strategy class, allowing new rules to be added without modifying existing logic. Rules can be enabled or disabled dynamically without redeployment.
 
-**Key Design Decisions**
-- Clear separation of concerns
-- Database-driven rule engine (Strategy Pattern)
-- Strict schema validation using Hibernate
-- Centralized audit logging
-- SQL-efficient reporting queries
+### Audit Logging
+Every critical operation (transaction ingestion, tax computation, rule execution) generates an immutable audit log entry to ensure traceability and regulatory compliance.
+
+### Reporting Strategy
+Reports are generated using SQL aggregation queries to ensure efficiency and avoid loading large datasets into memory.
+
+This design closely resembles real-world financial and regulatory systems where accuracy, traceability, and configurability are critical.
 
 ---
 
@@ -189,11 +193,49 @@ GET /api/exceptions/rule/{ruleName}
 ### Steps
 
 --bash
-git clone <your-github-repo-url>
+git clone <github-repo-url>
+
 cd tax-compliance
+
 mvn clean spring-boot:run
 
 Application runs on:
 http://localhost:8080
+
+## Database Setup Instructions
+
+1. Start MySQL server
+2. Create database:
+CREATE DATABASE tax_compliance_db;
+
+Update application.properties:
+
+spring.datasource.url=jdbc:mysql://localhost:3306/tax_compliance_db
+spring.datasource.username=root
+spring.datasource.password=your_password
+spring.jpa.hibernate.ddl-auto=validate
+
+
+Run the provided SQL scripts to create tables:
+
+transactions
+tax_rules
+exceptions
+audit_logs
+
+## Sample Transaction Upload JSON
+
+```json
+[
+  {
+    "transactionId": "TXN500",
+    "date": "2026-01-12",
+    "customerId": "CUST500",
+    "amount": 150000,
+    "taxRate": 0.18,
+    "reportedTax": 25000,
+    "transactionType": "SALE"
+  }
+]
 
 
