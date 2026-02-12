@@ -101,7 +101,7 @@ taxGap = expectedTax − reportedTax
 | Condition | Status |
 |--------|--------|
 | reportedTax missing | NON_COMPLIANT |
-| |taxGap| ≤ 1 | COMPLIANT |
+| taxGap ≤ 1 | COMPLIANT |
 | taxGap > 1 | UNDERPAID |
 | taxGap < -1 | OVERPAID |
 
@@ -187,7 +187,8 @@ GET /api/exceptions/rule/{ruleName}
 - MySQL
 
 ### Steps
-```bash
+
+--bash
 git clone <your-github-repo-url>
 cd tax-compliance
 mvn clean spring-boot:run
